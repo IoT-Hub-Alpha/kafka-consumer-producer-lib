@@ -8,7 +8,7 @@ class IoTProducerException(Exception):
     pass
 
 
-class IoTProducer:
+class IoTKafkaProducer:
     def __init__(self, **kwargs: dict[str, Any]):
         self._producer: Producer = KafkaProducerManager.get_single_producer(**kwargs)
 
