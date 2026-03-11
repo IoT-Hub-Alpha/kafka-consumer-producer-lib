@@ -1,12 +1,11 @@
 from .producer_singleton import KafkaProducerManager
-from typing import Any
+from typing import Any, Callable, Optional
 
-from confluent_kafka import KafkaError, Producer  # type: ignore
+from confluent_kafka import KafkaError, Producer, Message  # type: ignore
 
 
 class IoTProducerException(Exception):
     pass
-
 
 class KafKaProducer:
     def __init__(self, *_, **kwargs: dict[str, Any]):
@@ -20,7 +19,7 @@ class KafKaProducer:
         topic: str,
         key: bytes,
         value: bytes,
-        on_delivery: function,
+        on_delivery: Callable[[Optional["KafkaError"], "Message"], None], # type: ignore
         attempts: int = 3,
     ):
         for attempt in range(attempts):
