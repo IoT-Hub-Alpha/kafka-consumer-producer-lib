@@ -1,10 +1,7 @@
 from typing import Any
 from .kafka_configs import KafkaSettings, build_producer_config
 
-try:
-    from confluent_kafka import Producer  # type: ignore
-except ImportError:
-    Producer = None
+from confluent_kafka import Producer  # type: ignore
 
 
 class KafkaProducerError(Exception):
@@ -24,4 +21,4 @@ class KafkaProducerManager:
             config = build_producer_config(settings)
             cls._instance = Producer(config)
 
-        return cls._instance
+        return cls._instance  # type: ignore
