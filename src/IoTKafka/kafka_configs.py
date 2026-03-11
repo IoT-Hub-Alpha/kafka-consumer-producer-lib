@@ -6,6 +6,9 @@ import os
 
 @dataclass(frozen=True)
 class KafkaSettings:
+    service_name: str = "None"
+    auto_offset: bool = False
+    auto_commit: bool = False
     bootstrap_servers: str = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "None")
     client_id: str = str(os.getenv("KAFKA_CLIENT_ID", "none"))
     security_protocol = os.getenv("KAFKA_SECURITY_PROTOCOL")
@@ -17,6 +20,10 @@ class KafkaSettings:
     group_id: str | None = None
     auto_offset_reset: str = "earliest"
     enable_auto_commit: bool = False
+
+    sasl_mechanism: str | None = os.getenv("KAFKA_SASL_MECHANISM", None)
+    sasl_username: str | None = os.getenv("KAFKA_SASL_USERNAME", None)
+    sasl_password: str | None = os.getenv("KAFKA_SASL_PASSWORD", None)
 
 
 def build_producer_config(settings: KafkaSettings) -> dict[str, Any]:
@@ -35,5 +42,22 @@ def build_producer_config(settings: KafkaSettings) -> dict[str, Any]:
 def build_consumer_config(settings: KafkaSettings) -> dict[str, Any]:
     if not settings.group_id:
         raise ValueError("group_id is required for consumer config")
-
-    pass
+    config: dict[str, Any] = {
+        "bootstrap.servers": settings.bootstrap_servers,
+        "client.id": (
+            f"{settings.client_id}" f"-{settings.service_name}-{os.getpid()}"
+        ),
+        "group.id": settings.group_id,
+        "security.protocol": settings.security_protocol,
+        "enable.auto.commit": settings.auto_commit,
+        "auto.offset.reset": "earliest",
+        "enable.auto.offset.store": settings.auto_offset,
+        "max.poll.interval.ms": 15 * 60 * 1000,
+    }
+    if settings.sasl_mechanism:
+        config["sasl.mechanism"] = settings.sasl_mechanism
+    if settings.sasl_username:
+        config["sasl.username"] = settings.sasl_username
+    if settings.sasl_password:
+        config["sasl.password"] = settings.sasl_password
+    return config
