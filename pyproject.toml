@@ -10,9 +10,9 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "team_shared_lib"
+name = "IoTKafka"
 version = "0.1.0"
-description = "Shared Python utilities for the team"
+description = "Kafka Consumer/Producer"
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [
