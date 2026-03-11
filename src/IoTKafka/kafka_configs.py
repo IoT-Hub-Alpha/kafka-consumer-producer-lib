@@ -7,7 +7,7 @@ import os
 @dataclass(frozen=True)
 class KafkaSettings:
     bootstrap_servers: str = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "None")
-    client_id: int = int(os.getenv("KAFKA_CLIENT_ID", 0))
+    client_id: str = str(os.getenv("KAFKA_CLIENT_ID", "none"))
     security_protocol = os.getenv("KAFKA_SECURITY_PROTOCOL")
     acks: str = os.getenv("KAFKA_PRODUCER_ACKS", "None")
     linger_ms: int = int(os.getenv("KAFKA_PRODUCER_LINGER_MS", "5"))
