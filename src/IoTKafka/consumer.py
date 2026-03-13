@@ -4,8 +4,13 @@ from .kafka_configs import build_consumer_config, KafkaSettings
 
 class IoTKafkaConsumer:
     def __init__(self, **kwargs):
-        self.settings = KafkaSettings(**kwargs)
-        self._consumer = build_consumer_config(self.settings)
+        self._consumer = self._get_consumer(**kwargs)
+
+    def _get_consumer(self, **kwargs):
+        settings = KafkaSettings(**kwargs)
+        config = build_consumer_config(settings)
+        return Consumer(config)
+        
 
     def __getattr__(self, name):
         return getattr(self._consumer, name)
