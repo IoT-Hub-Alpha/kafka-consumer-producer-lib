@@ -6,7 +6,7 @@ import os
 
 @dataclass(frozen=True)
 class KafkaSettings:
-    service_name: str = "None"
+    name: str = "None"
     auto_offset: bool = False
     auto_commit: bool = False
     bootstrap_servers: str = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "None")
@@ -24,6 +24,22 @@ class KafkaSettings:
     sasl_mechanism: str | None = os.getenv("KAFKA_SASL_MECHANISM", None)
     sasl_username: str | None = os.getenv("KAFKA_SASL_USERNAME", None)
     sasl_password: str | None = os.getenv("KAFKA_SASL_PASSWORD", None)
+
+
+@dataclass(frozen=True)
+class KafkaTopics:
+    telemetry_raw = os.getenv("KAFKA_TOPIC_TELEMETRY_RAW", "telemetry.raw")
+    telemetry_clean = os.getenv("KAFKA_TOPIC_TELEMETRY_CLEAN", "telemetry.clean")
+    telemetry_dlq = os.getenv("KAFKA_TOPIC_TELEMETRY_DLQ", "telemetry.dlq")
+    event_topic = os.getenv("KAFKA_TOPIC_EVENT", "topic.event")
+
+    @classmethod
+    def values(cls):
+        return [
+            value
+            for key, value in vars(cls).items()
+            if not key.startswith("_") and not callable(value)
+        ]
 
 
 def build_producer_config(settings: KafkaSettings) -> dict[str, Any]:
@@ -44,9 +60,7 @@ def build_consumer_config(settings: KafkaSettings) -> dict[str, Any]:
         raise ValueError("group_id is required for consumer config")
     config: dict[str, Any] = {
         "bootstrap.servers": settings.bootstrap_servers,
-        "client.id": (
-            f"{settings.client_id}" f"-{settings.service_name}-{os.getpid()}"
-        ),
+        "client.id": (f"{settings.client_id}-{settings.name}-{os.getpid()}"),
         "group.id": settings.group_id,
         "security.protocol": settings.security_protocol,
         "enable.auto.commit": settings.auto_commit,

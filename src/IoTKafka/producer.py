@@ -2,6 +2,7 @@ from typing import Any, Callable, Optional
 from confluent_kafka import Producer, KafkaError, Message
 
 from .producer_singleton import KafkaProducerManager
+from .kafka_configs import KafkaTopics
 
 
 class IoTProducerException(Exception):
@@ -12,11 +13,9 @@ class IoTKafkaProducer:
     def __init__(self, **kwargs: dict[str, Any]):
         self._producer: Producer = KafkaProducerManager.get_single_producer(**kwargs)
 
-    # expose real producer if needed
     def raw(self) -> Producer:
         return self._producer
 
-    # custom produce with retry
     def produce(
         self,
         topic: str,
@@ -28,6 +27,9 @@ class IoTKafkaProducer:
 
         if isinstance(key, str):
             key = key.encode("utf-8")
+
+        if topic not in KafkaTopics.values():
+            raise IoTProducerException(f"{topic} is not a valid topic")
 
         for attempt in range(attempts):
             try:
