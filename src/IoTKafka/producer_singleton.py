@@ -1,7 +1,11 @@
-from typing import Any
-from .kafka_configs import KafkaSettings, build_producer_config
+from __future__ import annotations
 
-from confluent_kafka import Producer  # type: ignore
+from threading import Lock
+from typing import Any
+
+from confluent_kafka import Producer
+
+from .kafka_configs import KafkaSettings, build_producer_config
 
 
 class KafkaProducerError(Exception):
@@ -9,16 +13,25 @@ class KafkaProducerError(Exception):
 
 
 class KafkaProducerManager:
-    _instance: Any = None
+    _instances: dict[tuple[tuple[str, Any], ...], Producer] = {}
+    _lock = Lock()
 
     @classmethod
     def get_single_producer(cls, **kwargs: Any) -> Producer:
-        if Producer is None:
-            raise KafkaProducerError("confluent_kafka is not installed")
+        settings = KafkaSettings.from_kwargs(**kwargs)
+        config = build_producer_config(settings)
+        key = tuple(sorted(config.items()))
 
-        if cls._instance is None:
-            settings = KafkaSettings(**kwargs)
-            config = build_producer_config(settings)
-            cls._instance = Producer(config)
+        with cls._lock:
+            producer = cls._instances.get(key)
+            if producer is None:
+                producer = Producer(config)
+                cls._instances[key] = producer
+            return producer
 
-        return cls._instance  # type: ignore
+    @classmethod
+    def close_all(cls) -> None:
+        with cls._lock:
+            for producer in cls._instances.values():
+                producer.flush()
+            cls._instances.clear()
