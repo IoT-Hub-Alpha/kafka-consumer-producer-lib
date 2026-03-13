@@ -1,9 +1,8 @@
 from __future__ import annotations
 
+import json
 from typing import Any, Callable
-
 from confluent_kafka import KafkaError, Message, Producer
-
 from .kafka_configs import KafkaTopics
 from .producer_singleton import KafkaProducerManager
 
@@ -25,7 +24,7 @@ class IoTKafkaProducer:
         self,
         topic: str,
         key: bytes | str,
-        value: bytes | str,
+        value: bytes | str | dict[Any, Any],
         on_delivery: DeliveryCallback | None = None,
         attempts: int = 3,
         poll_timeout: float = 0.5,
@@ -37,6 +36,10 @@ class IoTKafkaProducer:
             key = key.encode("utf-8")
         if isinstance(value, str):
             value = value.encode("utf-8")
+        if isinstance(value, dict):
+            value = json.dumps(
+                        value, ensure_ascii=False
+                        ).encode("utf-8")
 
         if topic not in KafkaTopics.as_set():
             raise IoTProducerException(f"{topic!r} is not a valid topic")
