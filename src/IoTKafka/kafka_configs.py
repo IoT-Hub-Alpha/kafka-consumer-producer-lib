@@ -6,7 +6,6 @@ import os
 
 @dataclass(frozen=True)
 class KafkaSettings:
-    name: str = "None"
     auto_offset: bool = False
     auto_commit: bool = False
     bootstrap_servers: str = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "None")
@@ -61,7 +60,7 @@ def build_consumer_config(settings: KafkaSettings) -> dict[str, Any]:
         raise ValueError("group_id is required for consumer config")
     config: dict[str, Any] = {
         "bootstrap.servers": settings.bootstrap_servers,
-        "client.id": (f"{settings.client_id}-{settings.name}-{os.getpid()}"),
+        "client.id": (f"{settings.client_id}-{settings.group_id}-{os.getpid()}"),
         "group.id": settings.group_id,
         "security.protocol": settings.security_protocol,
         "enable.auto.commit": settings.auto_commit,
