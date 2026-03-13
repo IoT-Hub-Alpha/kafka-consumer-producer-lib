@@ -20,6 +20,7 @@ class KafkaSettings:
     group_id: str | None = None
     auto_offset_reset: str = "earliest"
     enable_auto_commit: bool = False
+    enable_auto_offset: bool = True
 
     sasl_mechanism: str | None = os.getenv("KAFKA_SASL_MECHANISM", None)
     sasl_username: str | None = os.getenv("KAFKA_SASL_USERNAME", None)
