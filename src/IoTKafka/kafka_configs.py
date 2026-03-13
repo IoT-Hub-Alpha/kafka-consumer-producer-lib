@@ -21,9 +21,15 @@ class KafkaSettings:
     # Consumer settings
     group_id: str | None = None
     auto_offset_reset: str = os.getenv("KAFKA_AUTO_OFFSET_RESET", "earliest")
-    enable_auto_commit: bool = os.getenv("KAFKA_ENABLE_AUTO_COMMIT", "false").lower() == "true"
-    enable_auto_offset_store: bool = os.getenv("KAFKA_ENABLE_AUTO_OFFSET_STORE", "false").lower() == "true"
-    max_poll_interval_ms: int = int(os.getenv("KAFKA_MAX_POLL_INTERVAL_MS", str(15 * 60 * 1000)))
+    enable_auto_commit: bool = (
+        os.getenv("KAFKA_ENABLE_AUTO_COMMIT", "false").lower() == "true"
+    )
+    enable_auto_offset_store: bool = (
+        os.getenv("KAFKA_ENABLE_AUTO_OFFSET_STORE", "false").lower() == "true"
+    )
+    max_poll_interval_ms: int = int(
+        os.getenv("KAFKA_MAX_POLL_INTERVAL_MS", str(15 * 60 * 1000))
+    )
 
     # SASL settings
     sasl_mechanism: str | None = os.getenv("KAFKA_SASL_MECHANISM")

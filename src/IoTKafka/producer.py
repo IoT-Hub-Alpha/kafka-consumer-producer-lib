@@ -37,9 +37,7 @@ class IoTKafkaProducer:
         if isinstance(value, str):
             value = value.encode("utf-8")
         if isinstance(value, dict):
-            value = json.dumps(
-                        value, ensure_ascii=False
-                        ).encode("utf-8")
+            value = json.dumps(value, ensure_ascii=False).encode("utf-8")
 
         if topic not in KafkaTopics.as_set():
             raise IoTProducerException(f"{topic!r} is not a valid topic")
@@ -61,7 +59,9 @@ class IoTKafkaProducer:
                     break
                 self._producer.poll(poll_timeout)
 
-        raise IoTProducerException(f"Kafka buffer full after {attempts} attempt(s): {last_error}")
+        raise IoTProducerException(
+            f"Kafka buffer full after {attempts} attempt(s): {last_error}"
+        )
 
     def flush(self, timeout: float | None = None) -> int:
         return self._producer.flush(timeout)

@@ -20,13 +20,13 @@ class FakeProducer:
         self.poll_calls = []
         self.flush_calls = []
         self.raise_buffer_errors = 0
-        self.custom_attr = 'producer-attr'
+        self.custom_attr = "producer-attr"
         type(self).created_configs.append(config)
 
     def produce(self, **kwargs):
         if self.raise_buffer_errors > 0:
             self.raise_buffer_errors -= 1
-            raise BufferError('queue full')
+            raise BufferError("queue full")
         self.produced.append(kwargs)
 
     def poll(self, timeout):
@@ -44,7 +44,7 @@ class FakeConsumer:
         self.config = config
         self.subscribed = []
         self.closed = False
-        self.custom_attr = 'consumer-attr'
+        self.custom_attr = "consumer-attr"
         type(self).created_configs.append(config)
 
     def subscribe(self, topics):
@@ -55,13 +55,13 @@ class FakeConsumer:
 
 
 def pytest_configure():
-    fake_module = types.ModuleType('confluent_kafka')
+    fake_module = types.ModuleType("confluent_kafka")
     fake_module.Producer = FakeProducer
     fake_module.Consumer = FakeConsumer
     fake_module.KafkaError = FakeKafkaError
     fake_module.Message = FakeMessage
-    sys.modules['confluent_kafka'] = fake_module
+    sys.modules["confluent_kafka"] = fake_module
 
-    root = str(Path('/mnt/data'))
+    root = str(Path("/mnt/data"))
     if root not in sys.path:
         sys.path.insert(0, root)

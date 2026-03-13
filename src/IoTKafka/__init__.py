@@ -1,5 +1,10 @@
 from .consumer import IoTKafkaConsumer
-from .kafka_configs import KafkaSettings, KafkaTopics, build_consumer_config, build_producer_config
+from .kafka_configs import (
+    KafkaSettings,
+    KafkaTopics,
+    build_consumer_config,
+    build_producer_config,
+)
 from .producer import IoTKafkaProducer, IoTProducerException
 from .producer_singleton import KafkaProducerManager, KafkaProducerError
 

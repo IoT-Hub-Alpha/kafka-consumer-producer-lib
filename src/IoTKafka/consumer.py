@@ -20,7 +20,9 @@ class IoTKafkaConsumer:
         return self._consumer
 
     def subscribe_topics(self, topics: list[str]) -> None:
-        invalid_topics = [topic for topic in topics if topic not in KafkaTopics.as_set()]
+        invalid_topics = [
+            topic for topic in topics if topic not in KafkaTopics.as_set()
+        ]
         if invalid_topics:
             raise ValueError(f"Invalid Kafka topic(s): {', '.join(invalid_topics)}")
         self._consumer.subscribe(topics)
