@@ -80,36 +80,48 @@ messages = raw_consumer.consume(
 
 ### Example Sample producer/consumer loop:
 ```python
-import json
-from IoTKafka import IoTKafkaProducer, IoTKafkaConsumer
+#import producer, consumer and producer exception
+from IoTKafka import IoTKafkaProducer, IoTKafkaConsumer, IoTProducerException
 from time import sleep
 
+#Initialization of producer, additional KWARGS can be added
+#producers initialized from this lib are ALWAYS singletons
 producer = IoTKafkaProducer()
+
+#Initialization of consumer, group_id is mandatory, additional KWARGS can be added
 raw_consumer = IoTKafkaConsumer(group_id="test-clean-consumer", enable_auto_offset_store=True)
 raw_consumer.subscribe(["telemetry.clean"])
 
-
+# Error callback batch
+batch_errors = []
 def batch_delivery_callback(err, msg: str):
-    batch_errors = []
     if err:
         batch_errors.append(err)
 
+#payload, can be either dict, str ot bytes
 payload = {"hey": 1, "bye": 2}
 
+#consumer function
 def test_consumer():
     messages = raw_consumer.consume(
         num_messages=1, timeout=1
             )
     print(messages)
 
+#producer function, has automatic retries and max attempts.
 def test_producer():
-    producer.produce(
-        topic="telemetry.clean",
-        key="SN-111-VVVV",
-        value=payload,
-        on_delivery=batch_delivery_callback,
-    )
+    try:
+        producer.produce(
+            topic="telemetry.clean",
+            key="SN-111-VVVV", #can be str or bytes.
+            value=payload, #can be str, dict or bytes.
+            on_delivery=batch_delivery_callback,
+            attempts=5
+        )
+    except IoTProducerException as e:
+        print(e)
 
+#simple sleep loop
 while True:
     test_producer()
     test_consumer()
