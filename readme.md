@@ -1,13 +1,15 @@
 ## Kafka Consumer/Producer library for IoT Hub Alpha.
 
 ### installation:
-`pip install git+https://github.com/IoT-Hub-Alpha/kafka-consumer-producer-lib.git@dev`
+`pip install git+https://github.com/IoT-Hub-Alpha/kafka-consumer-producer-lib.git@v1.0`
 
 or
 
-`git+https://github.com/IoT-Hub-Alpha/kafka-consumer-producer-lib.git@dev`
+`git+https://github.com/IoT-Hub-Alpha/kafka-consumer-producer-lib.git@v1.0`
 
 in `requirements.txt`, make sure docker image has git installed if running from docker.
+
+**Make sure git is installed on the image (Dockerfile)!**
 
 **@dev indicates the dev branch inside the `https://github.com/IoT-Hub-Alpha/kafka-consumer-producer-lib` repo, if you need a modified version of this library, you can create a new branch, modify it and install that.**
 
