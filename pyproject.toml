@@ -11,14 +11,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "IoTKafka"
-version = "0.1.0"
+version = "1.0.0"
 description = "Kafka Consumer/Producer"
 readme = "readme.md"
 requires-python = ">=3.10"
 authors = [
   { name = "Iot Team Alpha" }
 ]
-dependencies = []
+dependencies = ["confluent-kafka==2.12.1"]
 
 [tool.setuptools]
 package-dir = {"" = "src"}
