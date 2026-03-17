@@ -47,11 +47,7 @@ class IoTKafkaProducer:
         for attempt in range(attempts):
             try:
                 self._producer.produce(
-                    topic=topic,
-                    key=key,
-                    value=value,
-                    on_delivery=on_delivery,
-                    **kwargs
+                    topic=topic, key=key, value=value, on_delivery=on_delivery, **kwargs
                 )
                 self._producer.poll(0)
                 return
