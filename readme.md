@@ -1,5 +1,9 @@
 ## Kafka Consumer/Producer library for IoT Hub Alpha.
 
+### Versioning:
+**Current version on main is v1.0!
+Always check latest avalible version(by branch) and the version-log.md for changes!**
+
 ### installation:
 `pip install git+https://github.com/IoT-Hub-Alpha/kafka-consumer-producer-lib.git@v1.0`
 
