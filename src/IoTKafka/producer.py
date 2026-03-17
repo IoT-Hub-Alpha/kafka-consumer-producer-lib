@@ -28,6 +28,7 @@ class IoTKafkaProducer:
         on_delivery: DeliveryCallback | None = None,
         attempts: int = 3,
         poll_timeout: float = 0.5,
+        **kwargs,
     ) -> None:
         if attempts < 1:
             raise ValueError("attempts must be >= 1")
@@ -50,6 +51,7 @@ class IoTKafkaProducer:
                     key=key,
                     value=value,
                     on_delivery=on_delivery,
+                    **kwargs
                 )
                 self._producer.poll(0)
                 return
